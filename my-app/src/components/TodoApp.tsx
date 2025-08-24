@@ -3,6 +3,7 @@ import { useState } from "react";
 type Todo = {
     id: number;
     text: string;
+    completed: boolean;
 }
 
 function TodoApp(){
@@ -11,13 +12,19 @@ function TodoApp(){
 
     const addTodo = () => {
         if(input.trim() === "") return;
-        const newTodo:Todo = {id: Date.now(), text: input};
+        const newTodo:Todo = {id: Date.now(), text: input, completed: false};
         setTodos([...todos, newTodo]);
         setInput("");
     }
 
     const removeTodo = (id:number) => {
         setTodos(todos.filter(todo=> todo.id !== id));
+    }
+
+    const isCompleted = (id:number) => {
+        setTodos(todos.map(todo=> (
+            todo.id === id ? {...todo, completed: !todo.completed}:todo
+        )));
     }
 
     return(
@@ -34,9 +41,8 @@ function TodoApp(){
                 {
                     todos.map(todo => (
                         <li>
-                            {todo.text}
-                            <input type="checkbox" id="mark"/>
-                            <label htmlFor="mark">Mark as Done</label>
+                            <span onClick={()=>isCompleted(todo.id)} style={{textDecoration: todo.completed? "line-through":"none"}}>{todo.text}</span>
+                            &nbsp;
                             <button onClick={()=>removeTodo(todo.id)}>X</button>
                         </li>
                     ))
