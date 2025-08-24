@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 type Todo = {
     id: number;
@@ -7,8 +7,16 @@ type Todo = {
 }
 
 function TodoApp(){
-    const [todos, setTodos] = useState<Todo[]>([]);
+    const [todos, setTodos] = useState<Todo[]>(()=>{
+        const saved = localStorage.getItem("todos");
+        return saved ? JSON.parse(saved): [];
+    });
     const [input, setInput] = useState("");
+
+    useEffect(()=> {
+        localStorage.setItem("todos", JSON.stringify(todos));
+    },[todos]);
+
 
     const addTodo = () => {
         if(input.trim() === "") return;
@@ -21,7 +29,7 @@ function TodoApp(){
         setTodos(todos.filter(todo=> todo.id !== id));
     }
 
-    const isCompleted = (id:number) => {
+    const toggleCompleted = (id:number) => {
         setTodos(todos.map(todo=> (
             todo.id === id ? {...todo, completed: !todo.completed}:todo
         )));
@@ -41,7 +49,7 @@ function TodoApp(){
                 {
                     todos.map(todo => (
                         <li>
-                            <span onClick={()=>isCompleted(todo.id)} style={{textDecoration: todo.completed? "line-through":"none"}}>{todo.text}</span>
+                            <span onClick={()=>toggleCompleted(todo.id)} style={{textDecoration: todo.completed? "line-through":"none"}}>{todo.text}</span>
                             &nbsp;
                             <button onClick={()=>removeTodo(todo.id)}>X</button>
                         </li>
