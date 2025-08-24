@@ -48,6 +48,9 @@ function TodoApp(){
                     ))
                 }
             </ul>
+            <div>
+                Number of Todos: {todos.length}
+            </div>
         </div>
     );
 }
