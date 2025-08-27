@@ -4,6 +4,34 @@ type Todo = {
     id: number;
     text: string;
     completed: boolean;
+    createdAt: number;
+}
+
+function TodoItem({todo, onToggleCompleted, onRemoveTodo}:
+    {
+        todo: Todo;
+        onToggleCompleted: (id: number) => void;
+        onRemoveTodo: (id: number) => void;
+    }
+    
+){
+    const formattedDate = new Date(todo.createdAt).toLocaleString("en-US", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+        hour: "numeric",
+        minute: "2-digit",
+    });
+
+    return(
+        <li>
+            <span onClick={()=>onToggleCompleted(todo.id)} style={{textDecoration: todo.completed? "line-through":"none"}}>{todo.text}</span>
+            &nbsp;
+            <span>was created at {formattedDate}</span>
+            &nbsp;
+            <button onClick={()=>onRemoveTodo(todo.id)}>X</button>
+        </li>
+    );
 }
 
 function TodoApp(){
@@ -20,7 +48,7 @@ function TodoApp(){
 
     const addTodo = () => {
         if(input.trim() === "") return;
-        const newTodo:Todo = {id: Date.now(), text: input, completed: false};
+        const newTodo:Todo = {id: Date.now(), text: input, completed: false, createdAt: Date.now()};
         setTodos([...todos, newTodo]);
         setInput("");
     }
@@ -48,11 +76,11 @@ function TodoApp(){
             <ul>
                 {
                     todos.map(todo => (
-                        <li>
-                            <span onClick={()=>toggleCompleted(todo.id)} style={{textDecoration: todo.completed? "line-through":"none"}}>{todo.text}</span>
-                            &nbsp;
-                            <button onClick={()=>removeTodo(todo.id)}>X</button>
-                        </li>
+                        <TodoItem
+                            todo={todo}
+                            onToggleCompleted={toggleCompleted}
+                            onRemoveTodo={removeTodo}
+                        />
                     ))
                 }
             </ul>
