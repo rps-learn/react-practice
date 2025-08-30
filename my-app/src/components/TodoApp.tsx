@@ -5,12 +5,12 @@ import Footer from "./Footer";
 
 
 function TodoApp(){
-    const {todos, addTodo} = useTodos();
+    const {todos, dispatch} = useTodos();
     const [input, setInput] = useState("");
 
     const handleAdd = () => {
         if (input.trim() === "") return;
-        addTodo(input);
+        dispatch({ type: "ADD", text: input });
         setInput("");
     }
 
@@ -28,6 +28,7 @@ function TodoApp(){
                 {
                     todos.map(todo => (
                         <TodoItem
+                            key={todo.id}
                             todo={todo}
                         />
                     ))

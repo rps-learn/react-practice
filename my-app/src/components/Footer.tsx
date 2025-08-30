@@ -1,7 +1,7 @@
 import { useTodos } from "./TodoContext";
 
 function Footer(){
-    const { todos } = useTodos();
+    const { todos, dispatch } = useTodos();
     const completed = todos.filter((t) => t.completed).length;
     const total = todos.length;
     const remaining = total - completed;
@@ -15,6 +15,7 @@ function Footer(){
                 &nbsp;
                 {remaining} remaining
             </p>
+            <button onClick={ ()=> dispatch({type:"CLEAR-COMPLETED"}) }>Clear Completed</button>
         </div>
     );
 }

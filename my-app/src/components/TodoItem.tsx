@@ -1,8 +1,8 @@
 import { useTodos } from "./TodoContext";
 
 function TodoItem({todo}:{todo: any}){
-    const { toggleTodo, removeTodo} = useTodos();
-    
+    const { dispatch } = useTodos();
+
     const formattedDate = new Date(todo.createdAt).toLocaleString("en-US", {
         month: "short",
         day: "numeric",
@@ -13,11 +13,11 @@ function TodoItem({todo}:{todo: any}){
 
     return(
         <li>
-            <span onClick={()=>toggleTodo(todo.id)} style={{textDecoration: todo.completed? "line-through":"none"}}>{todo.text}</span>
+            <span onClick={()=> dispatch({ type: "TOGGLE", id: todo.id }) } style={{textDecoration: todo.completed? "line-through":"none"}}>{todo.text}</span>
             &nbsp;
             <span>was created at {formattedDate}</span>
             &nbsp;
-            <button onClick={()=>removeTodo(todo.id)}>X</button>
+            <button onClick={()=> dispatch({ type: "REMOVE", id: todo.id }) }>X</button>
         </li>
     );
 }

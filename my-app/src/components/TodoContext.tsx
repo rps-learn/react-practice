@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect, ReactNode} from "react";
+import { createContext, useContext, useReducer, useEffect, ReactNode} from "react";
 
 type Todo = {
   id: number;
@@ -7,49 +7,56 @@ type Todo = {
   createdAt: number;
 };
 
+type Action =
+  | { type: "ADD"; text: string }
+  | { type: "TOGGLE"; id: number }
+  | { type: "REMOVE"; id: number }
+  | { type: "CLEAR-COMPLETED"; };
+
+function todoReducer(state: Todo[], action: Action): Todo[] {
+  switch (action.type) {
+    case "ADD":
+      return [
+        ...state,
+        { id: Date.now(), text: action.text, completed: false, createdAt: Date.now() },
+      ];
+    case "TOGGLE":
+      return state.map(todo =>
+        todo.id === action.id ? { ...todo, completed: !todo.completed } : todo
+      );
+    case "REMOVE":
+      return state.filter(todo => todo.id !== action.id);
+    case "CLEAR-COMPLETED":
+      return state.filter(todo => !todo.completed);
+    default:
+      return state;
+  }
+}
+
 type TodoContextType = {
   todos: Todo[];
-  addTodo: (text: string) => void;
-  toggleTodo: (id: number) => void;
-  removeTodo: (id: number) => void;
+  dispatch: React.Dispatch<Action>;
 };
 
 const TodoContext = createContext<TodoContextType | undefined>(undefined);
 
 export function TodoProvider({ children }: { children: ReactNode }) {
-  const [todos, setTodos] = useState<Todo[]>(() => {
+
+  // Load from localStorage on first render
+  const initializer = () => {
     const saved = localStorage.getItem("todos");
     return saved ? JSON.parse(saved) : [];
-  });
+  };
 
+  const [todos, dispatch] = useReducer(todoReducer, [], initializer);
+
+  // Save to localStorage whenever todos change
   useEffect(() => {
     localStorage.setItem("todos", JSON.stringify(todos));
   }, [todos]);
 
-  const addTodo = (text: string) => {
-    const newTodo: Todo = {
-      id: Date.now(),
-      text,
-      completed: false,
-      createdAt: Date.now(),
-    };
-    setTodos([...todos, newTodo]);
-  };
-
-  const toggleTodo = (id: number) => {
-    setTodos(
-      todos.map(todo =>
-        todo.id === id ? { ...todo, completed: !todo.completed } : todo
-      )
-    );
-  };
-
-  const removeTodo = (id: number) => {
-    setTodos(todos.filter(todo => todo.id !== id));
-  };
-
   return (
-    <TodoContext.Provider value={{ todos, addTodo, toggleTodo, removeTodo }}>
+    <TodoContext.Provider value={{ todos, dispatch }}>
       {children}
     </TodoContext.Provider>
   );
