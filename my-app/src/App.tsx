@@ -1,4 +1,4 @@
-import { Routes, Route, Link } from "react-router-dom";
+import { Routes, Route, Link, NavLink } from "react-router-dom";
 import "./App.css";
 import TodoApp from "./components/TodoApp";
 import About from "./components/About";
@@ -10,14 +10,73 @@ function App() {
     <div>
       {/* Navigation */}
       <nav style={{ marginBottom: "20px" }}>
-        <Link to="/" style={{ marginRight: "10px" }}>Home</Link>
-        <Link to="/about" style={{ marginRight: "10px" }}>About</Link>
-        <Link to="/stats">Stats</Link>
+        <NavLink
+          to="/"
+          end   // important: makes "/" active only on exact match
+          style={({ isActive }) => ({
+            marginRight: "10px",
+            fontWeight: isActive ? "bold" : "normal",
+            color: isActive ? "tomato" : "black"
+          })}
+        >
+          Home
+        </NavLink>
+
+        <NavLink
+          to="/active"
+          end   // important: makes "/" active only on exact match
+          style={({ isActive }) => ({
+            marginRight: "10px",
+            fontWeight: isActive ? "bold" : "normal",
+            color: isActive ? "tomato" : "black"
+          })}
+        >
+          Active
+        </NavLink>
+
+        <NavLink
+          to="/completed"
+          end   // important: makes "/" active only on exact match
+          style={({ isActive }) => ({
+            marginRight: "10px",
+            fontWeight: isActive ? "bold" : "normal",
+            color: isActive ? "tomato" : "black"
+          })}
+        >
+          Completed
+        </NavLink>
+
+        <NavLink
+          to="/about"
+          end   // important: makes "/" active only on exact match
+          style={({ isActive }) => ({
+            marginRight: "10px",
+            fontWeight: isActive ? "bold" : "normal",
+            color: isActive ? "tomato" : "black"
+          })}
+        >
+          About
+        </NavLink>
+
+        <NavLink
+          to="/stats"
+          end   // important: makes "/" active only on exact match
+          style={({ isActive }) => ({
+            marginRight: "10px",
+            fontWeight: isActive ? "bold" : "normal",
+            color: isActive ? "tomato" : "black"
+          })}
+        >
+          Stats
+        </NavLink>
+
       </nav>
 
       {/* Routes */}
       <Routes>
-        <Route path="/" element={<TodoApp />} />
+        <Route path="/" element={<TodoApp filter="all"/>} />
+        <Route path="/active" element={<TodoApp filter="active"/>} />
+        <Route path="/completed" element={<TodoApp filter="completed"/>} />
         <Route path="/about" element={<About />} />
         <Route path="/stats" element={<Stats />} />
       </Routes>

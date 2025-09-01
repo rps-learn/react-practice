@@ -5,10 +5,9 @@ import Footer from "./Footer";
 
 type Filter = "all" | "active" | "completed";
 
-function TodoApp(){
+function TodoApp({filter}:{filter: Filter}){
     const {todos, dispatch} = useTodos();
     const [input, setInput] = useState("");
-    const [filter, setFilter] = useState<Filter>("all");
 
     const handleAdd = () => {
         if (input.trim() === "") return;
@@ -31,19 +30,6 @@ function TodoApp(){
                 onChange={(e)=> setInput(e.target.value)}
             />
             <button onClick={handleAdd}>Add</button>
-
-            {/* Filter Buttons */}
-            <div style={{ margin: "10px 0" }}>
-                <button onClick={() => setFilter("all")} disabled={filter === "all"}>
-                All
-                </button>
-                <button onClick={() => setFilter("active")} disabled={filter === "active"}>
-                Active
-                </button>
-                <button onClick={() => setFilter("completed")} disabled={filter === "completed"}>
-                Completed
-                </button>
-            </div>
 
             <ul>
                 {
