@@ -11,7 +11,8 @@ type Action =
   | { type: "ADD"; text: string }
   | { type: "TOGGLE"; id: number }
   | { type: "REMOVE"; id: number }
-  | { type: "CLEAR-COMPLETED"; };
+  | { type: "CLEAR-COMPLETED"; }
+  | { type: "EDIT"; id: number; text: string };
 
 function todoReducer(state: Todo[], action: Action): Todo[] {
   switch (action.type) {
@@ -28,6 +29,10 @@ function todoReducer(state: Todo[], action: Action): Todo[] {
       return state.filter(todo => todo.id !== action.id);
     case "CLEAR-COMPLETED":
       return state.filter(todo => !todo.completed);
+    case "EDIT":
+    return state.map(todo =>
+      todo.id === action.id ? { ...todo, text: action.text } : todo
+    );
     default:
       return state;
   }

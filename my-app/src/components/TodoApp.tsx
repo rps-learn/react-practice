@@ -28,6 +28,9 @@ function TodoApp({filter}:{filter: Filter}){
                 type="text"
                 value={input}
                 onChange={(e)=> setInput(e.target.value)}
+                onKeyDown={(e) => {
+                    if (e.key === "Enter") handleAdd();
+                }}
             />
             <button onClick={handleAdd}>Add</button>
 
@@ -41,6 +44,10 @@ function TodoApp({filter}:{filter: Filter}){
                     ))
                 }
             </ul>
+            {/* ✅ Hint Text */}
+            <p style={{ fontSize: "0.9em", color: "gray", marginTop: "5px" }}>
+            💡 Double-click a task to edit
+            </p>
             <Footer/>
         </div>
     );
