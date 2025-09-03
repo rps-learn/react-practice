@@ -1,33 +1,31 @@
-import { useState } from "react";
 import { useTodos } from "./TodoContext";
 import TodoItem from "./TodoItem";
 import Footer from "./Footer";
+import { useInput } from "../hooks/useInput";
+import { useFilterTodos } from "../hooks/useFilterTodos";
 
 type Filter = "all" | "active" | "completed";
 
 function TodoApp({filter}:{filter: Filter}){
-    const {todos, dispatch} = useTodos();
-    const [input, setInput] = useState("");
+    const {todos, addTodo} = useTodos();
+
+    const input = useInput("");
 
     const handleAdd = () => {
-        if (input.trim() === "") return;
-        dispatch({ type: "ADD", text: input });
-        setInput("");
+        if (input.value.trim() === "") return;
+        addTodo(input.value);
+        input.reset();
     }
 
-    const filteredTodos = todos.filter(todo => {
-        if (filter === "active") return !todo.completed;
-        if (filter === "completed") return todo.completed;
-        return true; // "all"
-    });
+    const filteredTodos = useFilterTodos(todos, filter);
 
     return(
         <div>
             <h2>My Todo List</h2>
             <input
                 type="text"
-                value={input}
-                onChange={(e)=> setInput(e.target.value)}
+                value={input.value}
+                onChange={input.onChange}
                 onKeyDown={(e) => {
                     if (e.key === "Enter") handleAdd();
                 }}

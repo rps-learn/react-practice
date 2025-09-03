@@ -1,20 +1,9 @@
-import { useState } from "react";
 import { useTodos } from "./TodoContext";
+import { useEditTodo } from "../hooks/useEditTodo";
 
 function TodoItem({todo}:{todo: any}){
-    const { dispatch } = useTodos();
-    const [isEditing, setIsEditing] = useState(false);
-    const [editableText, setEditableText] = useState(todo.text);
-
-    const handleEditableText = () => {
-        if(editableText.trim() !== ""){
-            dispatch({ type: "EDIT", id: todo.id, text: editableText });
-        }else{
-            // if empty, remove todo
-            dispatch({ type: "REMOVE", id: todo.id });
-        }
-        setIsEditing(false);
-    }
+    const { toggleTodo, removeTodo } = useTodos();
+    const { editText, setEditText, isEditing, startEditing, cancelEditing, saveEditing } = useEditTodo(todo.id, todo.text);
 
     const formattedDate = new Date(todo.createdAt).toLocaleString("en-US", {
         month: "short",
@@ -29,11 +18,12 @@ function TodoItem({todo}:{todo: any}){
             {isEditing ? (
                 <input type="text" 
                 autoFocus
-                value={editableText}
-                onChange={(e)=> setEditableText(e.target.value)}
-                onBlur={handleEditableText} 
+                value={editText}
+                onChange={(e) => setEditText(e.target.value)}
+                onBlur={saveEditing} 
                 onKeyDown={(e) => {
-                    if (e.key === "Enter") handleEditableText();
+                    if (e.key === "Enter") saveEditing();
+                    if (e.key === "Escape") cancelEditing();
                 }}
                 style={{
                 marginLeft: "8px",
@@ -46,15 +36,15 @@ function TodoItem({todo}:{todo: any}){
                 />
             ):(
                 <span 
-                onClick={()=> dispatch({ type: "TOGGLE", id: todo.id })} 
-                onDoubleClick={()=> setIsEditing(true)}
+                onClick={()=> toggleTodo(todo.id)} 
+                onDoubleClick={() => startEditing()}
                 style={{textDecoration: todo.completed? "line-through":"none"}}>{todo.text}
                 </span>
             )}
             &nbsp;
             <span>was created at {formattedDate}</span>
             &nbsp;
-            <button onClick={()=> dispatch({ type: "REMOVE", id: todo.id }) }>X</button>
+            <button onClick={()=> removeTodo(todo.id) }>X</button>
             
         </li>
     );

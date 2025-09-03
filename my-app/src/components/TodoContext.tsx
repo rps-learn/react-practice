@@ -11,7 +11,7 @@ type Action =
   | { type: "ADD"; text: string }
   | { type: "TOGGLE"; id: number }
   | { type: "REMOVE"; id: number }
-  | { type: "CLEAR-COMPLETED"; }
+  | { type: "CLEAR_COMPLETED"; }
   | { type: "EDIT"; id: number; text: string };
 
 function todoReducer(state: Todo[], action: Action): Todo[] {
@@ -27,7 +27,7 @@ function todoReducer(state: Todo[], action: Action): Todo[] {
       );
     case "REMOVE":
       return state.filter(todo => todo.id !== action.id);
-    case "CLEAR-COMPLETED":
+    case "CLEAR_COMPLETED":
       return state.filter(todo => !todo.completed);
     case "EDIT":
     return state.map(todo =>
@@ -71,5 +71,13 @@ export function TodoProvider({ children }: { children: ReactNode }) {
 export function useTodos() {
   const context = useContext(TodoContext);
   if (!context) throw new Error("useTodos must be used within TodoProvider");
-  return context;
+  const { todos, dispatch } = context;
+
+  const addTodo = (text: string) => dispatch({ type: "ADD", text });
+  const toggleTodo = (id: number) => dispatch({ type: "TOGGLE", id });
+  const removeTodo = (id: number) => dispatch({ type: "REMOVE", id });
+  const editTodo = (id: number, text: string) => dispatch({ type: "EDIT", id, text });
+  const clearCompleted = () => dispatch({ type: "CLEAR_COMPLETED" });
+
+  return { todos, addTodo, toggleTodo, removeTodo, editTodo, clearCompleted };
 }
