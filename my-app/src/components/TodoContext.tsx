@@ -1,7 +1,8 @@
 import { createContext, useContext, useReducer, useEffect, ReactNode} from "react";
+import { v4 as uuidv4 } from "uuid";
 
 type Todo = {
-  id: number;
+  id: string;
   text: string;
   completed: boolean;
   createdAt: number;
@@ -9,17 +10,17 @@ type Todo = {
 
 type Action =
   | { type: "ADD"; text: string }
-  | { type: "TOGGLE"; id: number }
-  | { type: "REMOVE"; id: number }
+  | { type: "TOGGLE"; id: string }
+  | { type: "REMOVE"; id: string }
   | { type: "CLEAR_COMPLETED"; }
-  | { type: "EDIT"; id: number; text: string };
+  | { type: "EDIT"; id: string; text: string };
 
 function todoReducer(state: Todo[], action: Action): Todo[] {
   switch (action.type) {
     case "ADD":
       return [
         ...state,
-        { id: Date.now(), text: action.text, completed: false, createdAt: Date.now() },
+        { id: uuidv4(), text: action.text, completed: false, createdAt: Date.now() },
       ];
     case "TOGGLE":
       return state.map(todo =>
@@ -74,9 +75,9 @@ export function useTodos() {
   const { todos, dispatch } = context;
 
   const addTodo = (text: string) => dispatch({ type: "ADD", text });
-  const toggleTodo = (id: number) => dispatch({ type: "TOGGLE", id });
-  const removeTodo = (id: number) => dispatch({ type: "REMOVE", id });
-  const editTodo = (id: number, text: string) => dispatch({ type: "EDIT", id, text });
+  const toggleTodo = (id: string) => dispatch({ type: "TOGGLE", id });
+  const removeTodo = (id: string) => dispatch({ type: "REMOVE", id });
+  const editTodo = (id: string, text: string) => dispatch({ type: "EDIT", id, text });
   const clearCompleted = () => dispatch({ type: "CLEAR_COMPLETED" });
 
   return { todos, addTodo, toggleTodo, removeTodo, editTodo, clearCompleted };

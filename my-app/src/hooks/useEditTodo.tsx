@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { useTodos } from "../components/TodoContext";
 
-export function useEditTodo(todoId: number, initialText: string) {
+export function useEditTodo(todoId: string, initialText: string) {
     const { editTodo, removeTodo } = useTodos();
-    
+
     const [isEditing, setIsEditing] = useState(false);
     const [editText, setEditText] = useState(initialText);
 

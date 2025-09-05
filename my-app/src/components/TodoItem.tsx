@@ -3,7 +3,7 @@ import { useEditTodo } from "../hooks/useEditTodo";
 import { motion } from "framer-motion";
 
 type Todo = {
-  id: number;
+  id: string;
   text: string;
   completed: boolean;
   createdAt: number;
@@ -38,7 +38,13 @@ function TodoItem({ todo, search = "" }: { todo: Todo; search?: string }){
     });
 
     return(
-        <li>
+        <li style={{ marginBottom: "8px" }} role="listitem">
+             <input
+                type="checkbox"
+                checked={todo.completed}
+                onChange={() => toggleTodo(todo.id)}
+                aria-label={`Mark "${todo.text}" as ${todo.completed ? "not done" : "done"}`}
+            />
             {isEditing ? (
                 <input type="text" 
                 autoFocus
@@ -49,22 +55,28 @@ function TodoItem({ todo, search = "" }: { todo: Todo; search?: string }){
                     if (e.key === "Enter") saveEditing();
                     if (e.key === "Escape") cancelEditing();
                 }}
+                aria-label={`Editing todo "${todo.text}"`}
                 style={{
-                marginLeft: "8px",
-                padding: "2px 4px",
-                border: "1px solid dodgerblue",
-                borderRadius: "4px",
-                outline: "none",
-                fontSize: "1em"
+                    marginLeft: "8px",
+                    padding: "2px 4px",
+                    border: "1px solid dodgerblue",
+                    borderRadius: "4px",
+                    outline: "none",
+                    fontSize: "1em"
                 }}
                 />
             ):(
-                <motion.div 
-                onClick={()=> toggleTodo(todo.id)} 
-                onDoubleClick={() => startEditing()}
-                style={{textDecoration: todo.completed? "line-through":"none"}}
+                <motion.span 
+                style={{
+                    textDecoration: todo.completed ? "line-through" : "none",
+                    marginLeft: "8px",
+                    cursor: "pointer",
+                    display: "inline-block",
+                }}
+                onDoubleClick={startEditing}
                 animate={{ scale: todo.completed ? 0.9 : 1 }}
-                transition={{ type: "spring", stiffness: 300, damping: 15 }}>
+                transition={{ type: "spring", stiffness: 300, damping: 15 }}
+                aria-label={todo.text}>
                     <span>
                         {renderText()}
                     </span>
@@ -72,8 +84,8 @@ function TodoItem({ todo, search = "" }: { todo: Todo; search?: string }){
                     &nbsp;
                     <span>was created at {formattedDate}</span>
                     &nbsp;
-                    <button onClick={()=> removeTodo(todo.id) }>X</button>
-                </motion.div>
+                    <button onClick={()=> removeTodo(todo.id) } aria-label={`Delete "${todo.text}"`}>X</button>
+                </motion.span>
 
             )}
             

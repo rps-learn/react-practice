@@ -28,13 +28,18 @@ function TodoApp({filter}:{filter: Filter}){
         <h1>Todo List ({filter})</h1>
 
         {/* Add Todo */}
+        <label htmlFor="new-todo" style={{ display: "none" }}>
+            Add a new todo
+        </label>
         <input
+            id="new-todo"
             value={input.value}
             onChange={input.onChange}
             onKeyDown={(e) => e.key === "Enter" && handleAdd()}
             placeholder="Enter todo"
+            aria-label="New todo"
         />
-        <button onClick={handleAdd}>Add</button>
+        <button onClick={handleAdd} aria-label="Add todo">Add</button>
 
         {/* Search & Sort Controls */}
         <motion.div

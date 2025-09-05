@@ -9,13 +9,10 @@ function Footer(){
 
     return(
         <div>
-            <p>
-                {total} tasks total
-                &nbsp;
-                {completed} completed
-                &nbsp;
-                {remaining} remaining
+            <p aria-live="polite">
+                {total} tasks total | {completed} completed | {remaining} remaining
             </p>
+
             <AnimatePresence>
                 {completed > 0 && (
                 <motion.button

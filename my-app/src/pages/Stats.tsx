@@ -1,4 +1,5 @@
-import { useTodos } from "./TodoContext";
+
+import { useTodos } from "../components/TodoContext";
 
 function Stats(){
     const { todos } = useTodos();
@@ -8,14 +9,10 @@ function Stats(){
 
     return(
         <div>
-            <h2>Stats</h2>
-            <p>
-                {total} tasks total
-                &nbsp;
-                {completed} completed
-                &nbsp;
-                {remaining} remaining
-            </p>
+            <h2>Statistics</h2>
+            <p>Total tasks: {total}</p>
+            <p>Completed: {completed}</p>
+            <p>Remaining: {remaining}</p>
         </div>
     );
 }
