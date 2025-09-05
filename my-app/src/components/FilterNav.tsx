@@ -1,66 +1,60 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
+import { motion } from "framer-motion";
 
 export default function FilterNav() {
-  const baseStyle: React.CSSProperties = {
-    marginRight: "10px",
-    padding: "4px 8px",
-    textDecoration: "none",
-    borderRadius: "4px",
-    display: "inline-block",
-  };
+  const location = useLocation();
+  const links = [
+    { to: "/all", label: "All" },
+    { to: "/active", label: "Active" },
+    { to: "/completed", label: "Completed" },
+    { to: "/about", label: "About" },
+    { to: "/stats", label: "Stats" },
+  ];
 
   return (
-    <nav aria-label="Main navigation">
-      <NavLink
-        to="/all"
-        style={({ isActive }) => ({
-          ...baseStyle,
-          background: isActive ? "dodgerblue" : "transparent",
-          color: isActive ? "white" : "black",
-        })}
-      >
-        All
-      </NavLink>
-      <NavLink
-        to="/active"
-        style={({ isActive }) => ({
-          ...baseStyle,
-          background: isActive ? "dodgerblue" : "transparent",
-          color: isActive ? "white" : "black",
-        })}
-      >
-        Active
-      </NavLink>
-      <NavLink
-        to="/completed"
-        style={({ isActive }) => ({
-          ...baseStyle,
-          background: isActive ? "dodgerblue" : "transparent",
-          color: isActive ? "white" : "black",
-        })}
-      >
-        Completed
-      </NavLink>
-      <NavLink
-        to="/about"
-        style={({ isActive }) => ({
-          ...baseStyle,
-          background: isActive ? "dodgerblue" : "transparent",
-          color: isActive ? "white" : "black",
-        })}
-      >
-        About
-      </NavLink>
-      <NavLink
-        to="/stats"
-        style={({ isActive }) => ({
-          ...baseStyle,
-          background: isActive ? "dodgerblue" : "transparent",
-          color: isActive ? "white" : "black",
-        })}
-      >
-        Stats
-      </NavLink>
+    <nav
+      aria-label="Main navigation"
+      style={{
+        display: "flex",
+        gap: "16px",
+        position: "relative",
+        marginBottom: "16px",
+      }}
+    >
+      {links.map((link) => {
+        const isActive = location.pathname === link.to;
+        return (
+          <div key={link.to} style={{ position: "relative" }}>
+            <NavLink
+              to={link.to}
+              style={{
+                textDecoration: "none",
+                color: isActive ? "dodgerblue" : "black",
+                fontWeight: isActive ? "bold" : "normal",
+                padding: "4px 8px",
+              }}
+            >
+              {link.label}
+            </NavLink>
+
+            {isActive && (
+              <motion.div
+                layoutId="underline"
+                style={{
+                  position: "absolute",
+                  left: 0,
+                  right: 0,
+                  bottom: -2,
+                  height: 3,
+                  borderRadius: 2,
+                  background: "dodgerblue",
+                }}
+                transition={{ type: "spring", stiffness: 500, damping: 30 }}
+              />
+            )}
+          </div>
+        );
+      })}
     </nav>
   );
 }
