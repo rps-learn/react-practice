@@ -1,9 +1,33 @@
 import { useTodos } from "./TodoContext";
 import { useEditTodo } from "../hooks/useEditTodo";
+import { motion } from "framer-motion";
 
-function TodoItem({todo}:{todo: any}){
+type Todo = {
+  id: number;
+  text: string;
+  completed: boolean;
+  createdAt: number;
+};
+
+function TodoItem({ todo, search = "" }: { todo: Todo; search?: string }){
     const { toggleTodo, removeTodo } = useTodos();
     const { editText, setEditText, isEditing, startEditing, cancelEditing, saveEditing } = useEditTodo(todo.id, todo.text);
+
+    // Highlight match
+    const renderText = () => {
+        if (!search) return todo.text;
+
+        const regex = new RegExp(`(${search})`, "gi");
+        const parts = todo.text.split(regex);
+
+        return parts.map((part, i) =>
+        part.toLowerCase() === search.toLowerCase() ? (
+            <mark key={i} style={{ backgroundColor: "yellow" }}>{part}</mark>
+        ) : (
+            part
+        )
+        );
+    };
 
     const formattedDate = new Date(todo.createdAt).toLocaleString("en-US", {
         month: "short",
@@ -35,16 +59,25 @@ function TodoItem({todo}:{todo: any}){
                 }}
                 />
             ):(
-                <span 
+                <motion.div 
                 onClick={()=> toggleTodo(todo.id)} 
                 onDoubleClick={() => startEditing()}
-                style={{textDecoration: todo.completed? "line-through":"none"}}>{todo.text}
-                </span>
+                style={{textDecoration: todo.completed? "line-through":"none"}}
+                animate={{ scale: todo.completed ? 0.9 : 1 }}
+                transition={{ type: "spring", stiffness: 300, damping: 15 }}>
+                    <span>
+                        {renderText()}
+                    </span>
+                   
+                    &nbsp;
+                    <span>was created at {formattedDate}</span>
+                    &nbsp;
+                    <button onClick={()=> removeTodo(todo.id) }>X</button>
+                </motion.div>
+
             )}
-            &nbsp;
-            <span>was created at {formattedDate}</span>
-            &nbsp;
-            <button onClick={()=> removeTodo(todo.id) }>X</button>
+            
+            
             
         </li>
     );
