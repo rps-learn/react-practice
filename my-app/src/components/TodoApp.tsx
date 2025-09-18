@@ -1,27 +1,36 @@
-import { useState } from "react";
 import { useTodos } from "./TodoContext";
+import { useUI } from "./UIContext";
 import TodoItem from "./TodoItem";
+import type { Todo } from "./TodoContext";
 import Footer from "./Footer";
 import { useInput } from "../hooks/useInput";
 import { useFilterTodos } from "../hooks/useFilterTodos";
 import { motion, AnimatePresence } from "framer-motion";
+import { useDebounce } from "../hooks/useDebounce";
+import { useLocation } from "react-router-dom";
+import { useEffect } from "react";
 
-type Filter = "all" | "active" | "completed";
-type SortOption = "newest" | "oldest" | "az" | "za";
-
-function TodoApp({filter}:{filter: Filter}){
+function TodoApp(){
+    const { pathname } = useLocation();
     const { todos, addTodo } = useTodos();
+    const { filter, setFilter, search, sort, setSearch, setSort } = useUI();
     const input = useInput("");
-    const [search, setSearch] = useState("");
-    const [sort, setSort] = useState<SortOption>("newest");
+    const debounced = useDebounce(search, 500);
+
+    // 🔑 Sync route with filter
+    useEffect(() => {
+        if (pathname === "/active") setFilter("active");
+        else if (pathname === "/completed") setFilter("completed");
+        else setFilter("all");
+    }, [pathname, setFilter]);
 
     const handleAdd = () => {
         if (input.value.trim() === "") return;
-        addTodo(input.value);
+        addTodo(input.value.trim());
         input.reset();
     };
 
-    const filteredTodos = useFilterTodos(todos, filter, search, sort);
+    const filteredTodos: Todo[] = useFilterTodos(todos, filter, debounced, sort);
 
     return(
     <div>
@@ -52,12 +61,14 @@ function TodoApp({filter}:{filter: Filter}){
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search todos..."
+            aria-label="Search todos"
             style={{ marginRight: "10px" }}
             />
 
             {search && (
                 <button
                 onClick={() => setSearch("")}
+                aria-label="Clear search"
                 style={{
                     marginRight: "10px",
                     background: "lightgray",
@@ -71,7 +82,7 @@ function TodoApp({filter}:{filter: Filter}){
                 </button>
             )}
 
-            <select value={sort} onChange={(e) => setSort(e.target.value as SortOption)}>
+            <select value={sort} onChange={(e) => setSort(e.target.value as typeof sort)}>
                 <option value="newest">Newest First</option>
                 <option value="oldest">Oldest First</option>
                 <option value="az">A–Z</option>
@@ -80,7 +91,7 @@ function TodoApp({filter}:{filter: Filter}){
         </motion.div>
 
         {/* Todo List */}
-        <ul>
+        <ul style={{ padding: 0 }}>
             <AnimatePresence>
                 {filteredTodos.map(todo => (
                 <motion.li
@@ -92,7 +103,7 @@ function TodoApp({filter}:{filter: Filter}){
                     transition={{ duration: 0.2 }}
                     style={{ listStyle: "none" }}
                 >
-                    <TodoItem todo={todo} search={search}/>
+                    <TodoItem todo={todo} search={debounced}/>
                 </motion.li>
                 ))}
             </AnimatePresence>

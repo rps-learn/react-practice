@@ -14,9 +14,9 @@ function App() {
 
       <Routes>
         <Route path="/" element={<Navigate to="/all" />} />
-        <Route path="/all" element={<TodoApp filter="all" />} />
-        <Route path="/active" element={<TodoApp filter="active" />} />
-        <Route path="/completed" element={<TodoApp filter="completed" />} />
+        <Route path="/all" element={<TodoApp/>} />
+        <Route path="/active" element={<TodoApp/>} />
+        <Route path="/completed" element={<TodoApp/>} />
         <Route path="/about" element={<About />} />
         <Route path="/stats" element={<Stats />} />
       </Routes>
